@@ -30,8 +30,12 @@ func (v *Validator) Field(value interface{}, name string) *Field {
     }
 }
 
-func (f *Field) String(message string) *Field {
+func (f *Field) String(messages ...string) *Field {
     f.validator.rules = append(f.validator.rules, func() error {
+        message := ""
+    if len(messages) > 0 {
+        message = messages[0]
+    }
         _, ok := f.value.(string)
         if !ok {
             if message != "" {
@@ -99,8 +103,12 @@ func (f *Field) Email(messages ...string) *Field {
 }
 
 
-func (f *Field) Min(length int, message string) *Field {
+func (f *Field) Min(length int, messages ...string) *Field {
     f.validator.rules = append(f.validator.rules, func() error {
+        message := ""
+    if len(messages) > 0 {
+        message = messages[0]
+    }
 		
       value, ok := f.value.(int);
 
@@ -122,8 +130,12 @@ func (f *Field) Min(length int, message string) *Field {
     return f
 }
 
-func (f *Field) Max(length int, message string) *Field {
+func (f *Field) Max(length int, messages ...string) *Field {
     f.validator.rules = append(f.validator.rules, func() error {
+        message := ""
+    if len(messages) > 0 {
+        message = messages[0]
+    }
 		
       value, ok := f.value.(int);
 
@@ -145,8 +157,13 @@ func (f *Field) Max(length int, message string) *Field {
     return f
 }
 
-func (f *Field) MinLength(length int, message string) *Field {
+func (f *Field) MinLength(length int, messages ...string) *Field {
     f.validator.rules = append(f.validator.rules, func() error {
+
+    message := ""
+    if len(messages) > 0 {
+        message = messages[0]
+    }
 		
       value, ok := f.value.(string);
 
@@ -168,9 +185,12 @@ func (f *Field) MinLength(length int, message string) *Field {
     return f
 }
 
-func (f *Field) MaxLength(length int, message string) *Field {
+func (f *Field) MaxLength(length int, messages ...string) *Field {
     f.validator.rules = append(f.validator.rules, func() error {
-		
+		message := ""
+    if len(messages) > 0 {
+        message = messages[0]
+    }
       value, ok := f.value.(string);
 
 	  if (!ok) {
@@ -191,8 +211,12 @@ func (f *Field) MaxLength(length int, message string) *Field {
     return f
 }
 
-func (f *Field) Number(message string) *Field {
+func (f *Field) Number(messages ...string) *Field {
     f.validator.rules = append(f.validator.rules, func() error {
+        message := ""
+    if len(messages) > 0 {
+        message = messages[0]
+    }
         _, ok := f.value.(int)
         if !ok {
             if message != "" {
@@ -207,8 +231,12 @@ func (f *Field) Number(message string) *Field {
 
 
 
-func (f *Field) Phone(message string) *Field {
+func (f *Field) Phone(messages ...string) *Field {
     f.validator.rules = append(f.validator.rules, func() error {
+        message := ""
+    if len(messages) > 0 {
+        message = messages[0]
+    }
         str, ok := f.value.(string)
         if !ok {
 			if message != "" {
