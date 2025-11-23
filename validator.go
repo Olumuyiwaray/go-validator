@@ -19,7 +19,6 @@ package validator
 import (
 	"fmt"
 	"regexp"
-	"strings"
 )
 
 // Validator holds all the validation rules for multiple fields.
@@ -347,19 +346,20 @@ func (f *Field) Phone(messages ...string) *Field {
 
 // Validate runs all validation rules.
 // If stopOnFirst is true, it stops at the first error.
-func (v *Validator) Validate(stopOnFirst bool) error {
-	var allErrors []string
+func (v *Validator) Validate(stopOnFirst bool) []error {
+	var allErrors []error
+
 	for _, rule := range v.rules {
 		if err := rule(); err != nil {
 			if stopOnFirst {
-				return err
+				return []error{err}
 			}
-			allErrors = append(allErrors, err.Error())
+			allErrors = append(allErrors, err)
 		}
 	}
-	if len(allErrors) > 0 {
-		return fmt.Errorf(strings.Join(allErrors, "; "))
-	}
-	return nil
-}
 
+	if len(allErrors) == 0 {
+		return nil 
+	}
+	return allErrors
+}
