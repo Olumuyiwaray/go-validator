@@ -18,6 +18,7 @@ package validator
 
 import (
 	"fmt"
+	"net/url"
 	"regexp"
 )
 
@@ -362,4 +363,80 @@ func (v *Validator) Validate(stopOnFirst bool) []error {
 		return nil 
 	}
 	return allErrors
+}
+
+
+
+// Url validates that the field value is a valid URL.
+// Uses Go's built-in url.ParseRequestURI for reliable validation.
+// Accepts an optional custom error message.
+//
+// Example:
+//    f.Url()
+//    f.Url("Invalid URL format")
+func (f *Field) Url(messages ...string) *Field {
+    f.validator.rules = append(f.validator.rules, func() error {
+        message := ""
+        if len(messages) > 0 {
+            message = messages[0]
+        }
+
+        str, ok := f.value.(string)
+        if !ok {
+            if message != "" {
+                return fmt.Errorf("%s", message)
+            }
+            return fmt.Errorf("%s must be a valid url", f.name)
+        }
+
+        u, err := url.ParseRequestURI(str)
+        if err != nil || u.Scheme == "" || u.Host == "" {
+            if message != "" {
+                return fmt.Errorf("%s", message)
+            }
+            return fmt.Errorf("%s must be a valid url", f.name)
+        }
+
+        return nil
+    })
+
+    return f
+}
+
+
+// UUID validates that the field value is a valid UUID (versions 1–5).
+// Accepts the standard 8-4-4-4-12 hexadecimal format.
+// Supports an optional custom error message.
+//
+// Example:
+//    f.UUID()
+//    f.UUID("Invalid UUID format")
+func (f *Field) UUID(messages ...string) *Field {
+    f.validator.rules = append(f.validator.rules, func() error {
+        message := ""
+        if len(messages) > 0 {
+            message = messages[0]
+        }
+
+        str, ok := f.value.(string)
+        if !ok {
+            if message != "" {
+                return fmt.Errorf("%s", message)
+            }
+            return fmt.Errorf("%s must be a valid UUID", f.name)
+        }
+
+        re := regexp.MustCompile(`^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[1-5][a-fA-F0-9]{3}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$`)
+
+        if !re.MatchString(str) {
+            if message != "" {
+                return fmt.Errorf("%s", message)
+            }
+            return fmt.Errorf("%s must be a valid UUID", f.name)
+        }
+
+        return nil
+    })
+
+    return f
 }
